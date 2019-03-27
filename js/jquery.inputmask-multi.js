@@ -10,16 +10,13 @@
  */
 (function ($) {
     $.masksLoad = function(url) {
-        var maskList;
-        $.ajax({
+        return $.ajax({
             url: url,
-            async: false,
             dataType: 'json',
             success: function (response) {
-                maskList = response;
+                return response;
             }
         });
-        return maskList;
     }
 
     $.masksSort = function(maskList, defs, match, key) {
@@ -345,6 +342,7 @@
             }
         }
         var match = maskMatch.call(this, text);
+        console.log(match, text);
         while (!match && text.length>0) {
             text = text.substr(0, text.length-1);
             match = maskMatch.call(this, text);
@@ -392,7 +390,14 @@
         this.inputmasks.placeholder = maskOpts.inputmask.placeholder || Inputmask.prototype.defaults.placeholder;
         this.inputmasks.insertMode = (maskOpts.inputmask.insertMode !== undefined) ? maskOpts.inputmask.insertMode : Inputmask.prototype.defaults.insertMode;
 
-        maskInit.call(this);
+        maskInit.call(this, maskOpts.html ? $(this).text() : undefined);
+    }
+
+    $.fn.formatmasks = function(opts) {
+        this.each(function () {
+            maskStart.call(this, $.extend(opts, { html: true }));
+        });
+        return this;
     }
 
     $.fn.inputmasks = function(fn) {
